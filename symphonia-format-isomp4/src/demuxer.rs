@@ -629,4 +629,17 @@ impl FormatReader for IsoMp4Reader<'_> {
     {
         self.iter.into_inner()
     }
+    fn stream_mut(&mut self, func: Box<dyn FnOnce(&mut MediaSourceStream<'_>) + '_>) -> Result<()> {
+        let reader = self.iter.inner_mut();
+        let seek_pos = reader.stream_position()?;
+        func(reader);
+        reader.seek(std::io::SeekFrom::Start(seek_pos))?;
+        Ok(())
+    }
+
+    fn stream(&self, func: Box<dyn FnOnce(&MediaSourceStream<'_>) + '_>) -> Result<()> {
+        let reader = self.iter.inner();
+        func(reader);
+        Ok(())
+    }
 }

@@ -275,6 +275,14 @@ impl<R: ReadBytes> ElementIterator<R> {
         self.reader
     }
 
+    pub(crate) fn inner_mut(&mut self) -> &mut R {
+        &mut self.reader
+    }
+
+    pub(crate) fn inner(&self) -> &R {
+        &self.reader
+    }
+
     /// Reads a single element header and moves to its next sibling by ignoring all the children.
     pub(crate) fn read_header(&mut self) -> Result<Option<ElementHeader>> {
         let header = self.read_header_no_consume()?;

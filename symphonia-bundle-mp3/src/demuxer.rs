@@ -392,6 +392,18 @@ impl FormatReader for MpaReader<'_> {
     {
         self.reader
     }
+
+    fn stream_mut(&mut self, func: Box<dyn FnOnce(&mut MediaSourceStream<'_>) + '_>) -> Result<()> {
+        let seek_pos = self.reader.stream_position()?;
+        func(&mut self.reader);
+        self.reader.seek(std::io::SeekFrom::Start(seek_pos))?;
+        Ok(())
+    }
+
+    fn stream(&self, func: Box<dyn FnOnce(&MediaSourceStream<'_>) + '_>) -> Result<()> {
+        func(&self.reader);
+        Ok(())
+    }
 }
 
 impl<'s> MpaReader<'s> {

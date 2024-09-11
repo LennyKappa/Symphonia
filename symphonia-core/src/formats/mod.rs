@@ -394,6 +394,19 @@ pub trait FormatReader: Send + Sync {
     fn into_inner<'s>(self: Box<Self>) -> MediaSourceStream<'s>
     where
         Self: 's;
+
+    /// Gain temporary access to the media source stream. (Added for touchHLE)
+    ///
+    /// There's no return type to keep this method object safe.
+    fn stream(&self, func: Box<dyn FnOnce(&MediaSourceStream<'_>) + '_>) -> Result<()>;
+
+    /// Gain temporary mutable access to the media source stream. (Added for touchHLE)
+    ///
+    /// After the stream is used, it is reset back to its original position. You should still take
+    /// care to avoid swapping or modifying the internal stream of the reader.
+    ///
+    /// There's no return type to keep this method object safe.
+    fn stream_mut(&mut self, func: Box<dyn FnOnce(&mut MediaSourceStream<'_>) + '_>) -> Result<()>;
 }
 
 /// A `Packet` contains a discrete amount of encoded data for a single codec bitstream. The exact

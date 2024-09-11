@@ -413,6 +413,10 @@ impl<B: ReadBytes> AtomIterator<B> {
         &mut self.reader
     }
 
+    pub fn inner(&self) -> &B {
+        &self.reader
+    }
+
     pub fn next(&mut self) -> Result<Option<AtomHeader>> {
         // Ignore any remaining data in the current atom that was not read.
         let cur_pos = self.reader.pos();
